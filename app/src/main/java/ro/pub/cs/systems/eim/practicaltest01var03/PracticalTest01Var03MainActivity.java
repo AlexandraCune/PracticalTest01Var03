@@ -3,8 +3,12 @@ package ro.pub.cs.systems.eim.practicaltest01var03;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +25,15 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
     String operation = null;
 
     private ButtonClickListener buttonClickListener = new ButtonClickListener();
+
+    private void StartPracticalService(int first_term, int second_term){
+
+        Intent intent = new Intent(getApplicationContext(), PracticalTest01Var03Service.class);
+        intent.putExtra("first_number", first_term);
+        intent.putExtra("second_number", second_term);
+        getApplicationContext().startService(intent);
+
+    }
     private class ButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -28,8 +41,11 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
                 switch (view.getId()) {
                     case R.id.add_button:
                         operation = "add";
+
                         Integer first_term = Integer.parseInt(first_term_edit_text.getText().toString());
                         Integer second_term = Integer.parseInt(second_term_edit_text.getText().toString());
+
+                        StartPracticalService(first_term, second_term);
                         if (first_term_edit_text.getText().toString().matches("[0-9]+") && second_term_edit_text.getText().toString().matches("[0-9]+")) {
                             result_edit_text.setText(String.valueOf(first_term + second_term));
                         } else {
@@ -42,6 +58,7 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
                         operation = "diff";
                         first_term = Integer.parseInt(first_term_edit_text.getText().toString());
                         second_term = Integer.parseInt(second_term_edit_text.getText().toString());
+                        StartPracticalService(first_term, second_term);
                         if (first_term_edit_text.getText().toString().matches("[0-9]+") && second_term_edit_text.getText().toString().matches("[0-9]+")) {
                             result_edit_text.setText(String.valueOf(first_term - second_term));
                         } else {
@@ -62,7 +79,20 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
             }
         }
     }
+    protected void onDestroy(){
+        super.onDestroy();
+        Intent intent = new Intent(getApplicationContext(), PracticalTest01Var03Service.class);
+        getApplicationContext().stopService(intent);
+    }
 
+    private class MessageBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(Constants.BROADCAST_RECEIVER_EXTRA,intent.getStringExtra(Constants.BROADCAST_RECEIVER_EXTRA));
+        }
+    }
+    private MessageBroadcastReceiver messageBroadcastReceiver = new MessageBroadcastReceiver();
+    private IntentFilter intentFilter = new IntentFilter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +141,12 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), final_elem, Toast.LENGTH_LONG).show();
 
         }
+
+        intentFilter.addAction(Constants.actionTypes[0]);
+
+//        for(int index = 0; index < Constants.actionTypes.length; index++) {
+//            intentFilter.addAction(Constants.actionTypes[index]);
+//        }
     }
 
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -165,4 +201,14 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
                 break;
         }
     }
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(messageBroadcastReceiver, intentFilter);
+    }
+
+    protected void onPause() {
+        unregisterReceiver(messageBroadcastReceiver);
+        super.onPause();
+    }
+
 }
