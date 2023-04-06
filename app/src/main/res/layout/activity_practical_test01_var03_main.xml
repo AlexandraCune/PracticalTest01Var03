@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/first_term_edit_text"
         android:hint="@string/first_term"
+        android:saveEnabled="false"
         android:inputType="text" />
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,6 +40,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/second_term_edit_text"
         android:hint="@string/second_term"
+        android:saveEnabled="false"
         android:inputType="text" />
 
     <EditText
@@ -46,6 +48,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/result_edit_text"
         android:hint="@string/result"
+        android:saveEnabled="false"
         android:enabled="false"
         android:inputType="text" />
 
