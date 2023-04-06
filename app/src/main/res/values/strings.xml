@@ -6,4 +6,7 @@
     <string name="second_term">Second Term</string>
     <string name="result">Result</string>
     <string name="navigate">Navigate to secondary activity</string>
+    <string name="op_result_text">RESULT</string>
+    <string name="correct_button">Correct</string>
+    <string name="incorrect_button">INCORRECT</string>
 </resources>

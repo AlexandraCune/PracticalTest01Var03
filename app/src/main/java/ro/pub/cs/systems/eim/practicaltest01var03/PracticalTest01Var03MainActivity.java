@@ -3,6 +3,7 @@ package ro.pub.cs.systems.eim.practicaltest01var03;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,7 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
     private EditText second_term_edit_text = null;
     private EditText result_edit_text = null;
     private Button navigate_button = null;
+    String operation = null;
 
     private ButtonClickListener buttonClickListener = new ButtonClickListener();
     private class ButtonClickListener implements View.OnClickListener {
@@ -25,6 +27,7 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
             if(first_term_edit_text.getText().toString().matches("[0-9]+") && second_term_edit_text.getText().toString().matches("[0-9]+") ) {
                 switch (view.getId()) {
                     case R.id.add_button:
+                        operation = "add";
                         Integer first_term = Integer.parseInt(first_term_edit_text.getText().toString());
                         Integer second_term = Integer.parseInt(second_term_edit_text.getText().toString());
                         if (first_term_edit_text.getText().toString().matches("[0-9]+") && second_term_edit_text.getText().toString().matches("[0-9]+")) {
@@ -36,10 +39,11 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
 
                         break;
                     case R.id.diff_button:
+                        operation = "diff";
                         first_term = Integer.parseInt(first_term_edit_text.getText().toString());
                         second_term = Integer.parseInt(second_term_edit_text.getText().toString());
                         if (first_term_edit_text.getText().toString().matches("[0-9]+") && second_term_edit_text.getText().toString().matches("[0-9]+")) {
-                            result_edit_text.setText(String.valueOf(first_term + second_term));
+                            result_edit_text.setText(String.valueOf(first_term - second_term));
                         } else {
                             Toast.makeText(getApplicationContext(), "Not int value", Toast.LENGTH_LONG).show();
 
@@ -47,6 +51,10 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
 //                    result_edit_text.setText(String.valueOf(first_term - second_term));
                         break;
                     case R.id.navigate_button:
+                        Intent intent = new Intent(getApplicationContext(), PracticalTest01Var03SecondaryActivity.class);
+                        intent.putExtra("operation", operation);
+                        intent.putExtra("result", result_edit_text.getText().toString());
+                        startActivityForResult(intent, 2016);
                         break;
                 }
             }else{
@@ -66,6 +74,7 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
         diff_button = (Button)findViewById(R.id.diff_button);
         diff_button.setOnClickListener(buttonClickListener);
         navigate_button = (Button)findViewById(R.id.navigate_button);
+        navigate_button.setOnClickListener(buttonClickListener);
         first_term_edit_text = (EditText)findViewById(R.id.first_term_edit_text);
         second_term_edit_text = (EditText)findViewById(R.id.second_term_edit_text);
         result_edit_text = (EditText)findViewById(R.id.result_edit_text);
@@ -141,5 +150,19 @@ public class PracticalTest01Var03MainActivity extends AppCompatActivity {
         }
         Toast.makeText(getApplicationContext(), final_elem, Toast.LENGTH_LONG).show();
 
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        switch(requestCode) {
+            case 2016:
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Activity returned with result Correct" , Toast.LENGTH_LONG).show();
+                }
+                if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(this, "Activity returned with result Incorrect" , Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
     }
 }
